@@ -1,0 +1,52 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build the Docker image
+      run: |
+        docker build ./backend --file api_server/Dockerfile --tag ${{ secrets.DOCKER_USER }}/web-store-be:${{ github.run_number }}
+        docker build ./frontend --file client_server/Dockerfile --tag ${{ secrets.DOCKER_USER }}/web-store-fe:${{ github.run_number }}
+      
+    - name: Docker Login
+      uses: docker/login-action@v3.1.0
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_TOKEN2 }}
+
+    - name: push to dockerhub
+      run: |
+        docker push ${{ secrets.DOCKER_USER }}/web-store-be:${{ github.run_number }}
+        docker push ${{ secrets.DOCKER_USER }}/web-store-fe:${{ github.run_number }}
+        
+    - name: Check out my other repo
+      uses: actions/checkout@master
+      with:
+        repository: oraharon/web-app-store
+
+    - name: Install YQ
+      uses: dcarbone/install-yq-action@v1.1.1
+
+    - name: Update Deployment Image Tag
+      working-directory: chart/webserverchart
+      run: |
+        yq -i '.clientWebServer.clientWebServer.image.tag |= "${{ github.run_number }}"' values.yaml
+
+    - name: Commit changest
+      uses: EndBug/add-and-commit@v9
+      with:
+        add: chart/webserverchart/values.yaml
+        message: "changed version of shop app to ${{ github.run_number }}"
+        pathspec_error_handling: exitImmediately
