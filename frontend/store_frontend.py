@@ -11,20 +11,20 @@ app = Flask(__name__)
 KAFKA_IP = os.getenv('KAFKA_IP')
 API_SERVER_IP = os.getenv('API_SERVER_IP')
 API_SERVER_URL = f'http://{API_SERVER_IP}:5000'
-kafka_password = os.getenv('KAFKA_PASSWORD')
+# kafka_password = os.getenv('KAFKA_PASSWORD')
 
 # Set Kafka SASL authentication configurations
-sasl_mechanism = "PLAIN"
-security_protocol = "SASL_PLAINTEXT"
-username = "user1"
+# sasl_mechanism = "PLAIN"
+# security_protocol = "SASL_PLAINTEXT"
+# username = "user1"
 
 # Kafka production configuration
 producer = KafkaProducer(
     bootstrap_servers=f'{KAFKA_IP}:9092',
-    security_protocol=security_protocol,
-    sasl_mechanism=sasl_mechanism,
-    sasl_plain_username=username,
-    sasl_plain_password=kafka_password,
+    # security_protocol=security_protocol,
+    # sasl_mechanism=sasl_mechanism,
+    # sasl_plain_username=username,
+    # sasl_plain_password=kafka_password,
     value_serializer=lambda v: json.dumps(v).encode('utf-8')
 )
 

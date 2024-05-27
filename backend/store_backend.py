@@ -14,7 +14,7 @@ MONGO_PORT = 27017
 mongo_username = os.getenv('MONGO_USERNAME')
 mongo_password = os.getenv('MONGO_PASSWORD')
 KAFKA_IP = os.getenv('KAFKA_IP')
-kafka_password = os.getenv('KAFKA_PASSWORD')
+# kafka_password = os.getenv('KAFKA_PASSWORD')
 
 
 # Use the MongoDB instance running on port 27017
@@ -29,18 +29,18 @@ collection_items = db['items']
 
 
 # Set Kafka SASL authentication configurations
-sasl_mechanism = "PLAIN"
-security_protocol = "SASL_PLAINTEXT"
-username = "user1"
+# sasl_mechanism = "PLAIN"
+# security_protocol = "SASL_PLAINTEXT"
+# username = "user1"
 
 # Kafka consumer configuration
 consumer = KafkaConsumer(
     'purchase_topic',
     bootstrap_servers=f'{KAFKA_IP}:9092',
-    security_protocol=security_protocol,
-    sasl_mechanism=sasl_mechanism,
-    sasl_plain_username=username,
-    sasl_plain_password=kafka_password,
+    # security_protocol=security_protocol,
+    # sasl_mechanism=sasl_mechanism,
+    # sasl_plain_username=username,
+    # sasl_plain_password=kafka_password,
     value_deserializer=lambda m: json.loads(m.decode('utf-8'))
 )
 
